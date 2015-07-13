@@ -13,7 +13,7 @@ public class ToastAppearance {
     public var blur: Bool = true
     
     /// Blur style if blur is set to true
-    public var blurStyle: UIBlurEffectStyle = .Light
+    public var blurStyle: UIBlurEffectStyle = .Dark
     
     /// Toast background corner radius
     public var cornerRadius: CGFloat = 4
