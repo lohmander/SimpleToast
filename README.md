@@ -8,7 +8,7 @@ Provides Android-like API for displaying toasts with keyboard aware positioning 
 Through CocoaPods:
 
 ```
-pod 'SimpleToast', :git => 'https://github.com/lohmander/SimpleToast.git'
+pod 'SimpleToast', '~> 0.1.1'
 ```
 
 ## Usage
