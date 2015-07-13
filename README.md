@@ -1,5 +1,5 @@
-# iOS-Toast
-Provides Android-like API for displaying toasts with keyboard aware positioning.
+# SimpleToast
+Provides Android-like API for displaying toasts with keyboard aware positioning on iOS.
 
 ![Toast](https://raw.githubusercontent.com/lohmander/iOS-Toast/master/screencast.gif)
 

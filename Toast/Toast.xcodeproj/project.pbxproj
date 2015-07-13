@@ -420,6 +420,7 @@
 				1FA20DE81B53B16E00ECBACE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		1FA20DE91B53B16E00ECBACE /* Build configuration list for PBXNativeTarget "ToastTests" */ = {
 			isa = XCConfigurationList;
@@ -428,6 +429,7 @@
 				1FA20DEB1B53B16E00ECBACE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
