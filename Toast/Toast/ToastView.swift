@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Lohmander. All rights reserved.
 //
 
-import UIKit
+import Foundation
 
 class ToastView: UIView {
     var blurEffectView: UIVisualEffectView?

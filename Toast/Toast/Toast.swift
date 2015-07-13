@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Lohmander. All rights reserved.
 //
 
-import UIKit
+import Foundation
 
 public class Toast {
     public static let LENGTH_SHORT: Double = 2
