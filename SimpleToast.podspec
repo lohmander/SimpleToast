@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'SimpleToast'
-  s.version = '0.1.0'
+  s.version = '0.1.1'
   s.license = 'MIT'
   s.summary = 'Simple toasts with Android-like API and keyboard aware positioning.'
   s.homepage = 'https://github.com/lohmander/SimpleToast'
