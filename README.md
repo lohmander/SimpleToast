@@ -16,7 +16,7 @@ pod 'SimpleToast', '~> 0.1.1'
 First you need to initialize the keyboard observer somewhere. It doesn't really matter where.
 
 ```
-import Toast
+import SimpleToast
 
 ...
 
