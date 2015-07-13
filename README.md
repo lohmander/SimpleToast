@@ -3,6 +3,14 @@ Provides Android-like API for displaying toasts with keyboard aware positioning 
 
 ![Toast](https://raw.githubusercontent.com/lohmander/iOS-Toast/master/screencast.gif)
 
+## Installation
+
+Through CocoaPods:
+
+```
+pod 'SimpleToast', :git => 'https://github.com/lohmander/SimpleToast.git'
+```
+
 ## Usage
 
 First you need to initialize the keyboard observer somewhere. It doesn't really matter where.
