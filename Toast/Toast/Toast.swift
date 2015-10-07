@@ -57,7 +57,7 @@ public class Toast {
     public func show() -> Void {
         let keyWindow = UIApplication.sharedApplication().keyWindow
         
-        if let windowView = keyWindow?.subviews.first as? UIView {
+        if let windowView = keyWindow?.subviews.first as UIView? {
             toast = ToastView()
             toast.textLabel?.text = self.text
             
@@ -73,8 +73,8 @@ public class Toast {
             
             windowView.addSubview(toast)
             
-            let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:[toast]-\(yMargin)-|", options: NSLayoutFormatOptions(0), metrics: nil, views: views)
-            let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-(>=\(margin))-[toast]-(>=\(margin))-|", options: NSLayoutFormatOptions(0), metrics: nil, views: views)
+            let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:[toast]-\(yMargin)-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: views)
+            let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-(>=\(margin))-[toast]-(>=\(margin))-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: views)
             let centerContraint = NSLayoutConstraint(item: toast, attribute: .CenterX, relatedBy: .Equal, toItem: windowView, attribute: .CenterX, multiplier: 1, constant: 0)
             
             windowView.addConstraints(verticalConstraints)
