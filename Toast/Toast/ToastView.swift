@@ -25,18 +25,18 @@ class ToastView: UIView {
     }
     
     required init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+        super.init(coder: aDecoder)!
         setup()
     }
     
     private func setup() {
-        self.setTranslatesAutoresizingMaskIntoConstraints(false)
+        //self.setTranslatesAutoresizingMaskIntoConstraints(false)
         self.alpha = 0
         
         if Toast.appearance.blur {
             let blurEffect = UIBlurEffect(style: Toast.appearance.blurStyle)
             blurEffectView = UIVisualEffectView(effect: blurEffect)
-            blurEffectView?.setTranslatesAutoresizingMaskIntoConstraints(false)
+            //blurEffectView?.setTranslatesAutoresizingMaskIntoConstraints(false)
             blurEffectView?.layer.cornerRadius = 5
             blurEffectView?.clipsToBounds = true
             
@@ -46,7 +46,7 @@ class ToastView: UIView {
         textLabel = UILabel()
         textLabel?.textColor = Toast.appearance.textColor
         textLabel?.numberOfLines = 0
-        textLabel?.setTranslatesAutoresizingMaskIntoConstraints(false)
+        //textLabel?.setTranslatesAutoresizingMaskIntoConstraints(false)
         
         self.addSubview(textLabel!)
     }
@@ -57,8 +57,8 @@ class ToastView: UIView {
             
             var views: [String: AnyObject] = ["label": textLabel!]
             
-            let horizontalMargin = NSLayoutConstraint.constraintsWithVisualFormat("H:|-\(padding)-[label]-\(padding)-|", options: NSLayoutFormatOptions(0), metrics: nil, views: views)
-            let verticalMargin = NSLayoutConstraint.constraintsWithVisualFormat("V:|-\(padding)-[label]-\(padding)-|", options: NSLayoutFormatOptions(0), metrics: nil, views: views)
+            let horizontalMargin = NSLayoutConstraint.constraintsWithVisualFormat("H:|-\(padding)-[label]-\(padding)-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: views)
+            let verticalMargin = NSLayoutConstraint.constraintsWithVisualFormat("V:|-\(padding)-[label]-\(padding)-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: views)
             
             self.addConstraints(horizontalMargin)
             self.addConstraints(verticalMargin)
@@ -66,8 +66,8 @@ class ToastView: UIView {
             if blurEffectView != nil {
                 views["blur"] = blurEffectView!
                 
-                let blurWidthConstraint = NSLayoutConstraint.constraintsWithVisualFormat("H:|[blur]|", options: NSLayoutFormatOptions(0), metrics: nil, views: views)
-                let blurHeightContraint = NSLayoutConstraint.constraintsWithVisualFormat("V:|[blur]|", options: NSLayoutFormatOptions(0), metrics: nil, views: views)
+                let blurWidthConstraint = NSLayoutConstraint.constraintsWithVisualFormat("H:|[blur]|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: views)
+                let blurHeightContraint = NSLayoutConstraint.constraintsWithVisualFormat("V:|[blur]|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: views)
                 
                 self.addConstraints(blurWidthConstraint)
                 self.addConstraints(blurHeightContraint)
