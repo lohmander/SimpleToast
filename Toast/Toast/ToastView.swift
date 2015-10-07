@@ -1,5 +1,5 @@
 //
-//  ToastView.swift
+//  Toast.swift
 //  Toast
 //
 //  Created by Hannes Lohmander on 13/07/15.
@@ -8,74 +8,122 @@
 
 import Foundation
 
-class ToastView: UIView {
-    var blurEffectView: UIVisualEffectView?
-    var textLabel: UILabel?
+public class Toast {
+    public static let LENGTH_SHORT: Double = 2
+    public static let LENGTH_LONG: Double = 5
     
-    private var constraintsSet: Bool = false
+    /// Shared toast appearance settings
+    public static let appearance = ToastAppearance()
     
-    required init() {
-        super.init(frame: CGRectZero)
-        setup()
+    /// Shared keyboard observer used to determine appropriate toast position
+    private static var keyboardObserver: KeyboardObserver?
+    
+    var text: String!
+    var duration: Double!
+    var toast: ToastView!
+    
+    /**
+        Initializes keyboard observer used to figure out the appropriate
+        toast position 
+    
+        :returns: Void
+    */
+    public class func initKeyboardObserver() -> Void {
+        Toast.keyboardObserver = KeyboardObserver()
     }
     
-    required override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
+    /**
+        Initializes a Toast-object with sepcified text and duration
     
-    required init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        setup()
-    }
-    
-    private func setup() {
-        self.setTranslatesAutoresizingMaskIntoConstraints(false)
-        self.alpha = 0
+        :param: text Text message to show
+        :param: duration Time to show the toast
         
-        if Toast.appearance.blur {
-            let blurEffect = UIBlurEffect(style: Toast.appearance.blurStyle)
-            blurEffectView = UIVisualEffectView(effect: blurEffect)
-            blurEffectView?.setTranslatesAutoresizingMaskIntoConstraints(false)
-            blurEffectView?.layer.cornerRadius = 5
-            blurEffectView?.clipsToBounds = true
-            
-            self.addSubview(blurEffectView!)
-        }
+        :returns: Toast
+    */
+    public class func makeText(text: String, duration: Double = Toast.LENGTH_LONG) -> Toast {
+        let toast = Toast()
         
-        textLabel = UILabel()
-        textLabel?.textColor = Toast.appearance.textColor
-        textLabel?.numberOfLines = 0
-        textLabel?.setTranslatesAutoresizingMaskIntoConstraints(false)
+        toast.text = text
+        toast.duration = duration
         
-        self.addSubview(textLabel!)
+        return toast
     }
     
-    override func updateConstraints() {
-        if !constraintsSet {
-            let padding = Toast.appearance.padding
+    /**
+        Displays the toast on screen
+    
+        :returns: Void
+    */
+    public func show() -> Void {
+        let keyWindow = UIApplication.sharedApplication().keyWindow
+        
+        if let windowView = keyWindow?.subviews.first as UIView? {
+            toast = ToastView()
+            toast.textLabel?.text = self.text
             
-            var views: [String: AnyObject] = ["label": textLabel!]
+            let margin = Toast.appearance.margin
+            let views = ["toast": toast]
+            let yMargin: CGFloat
             
-            let horizontalMargin = NSLayoutConstraint.constraintsWithVisualFormat("H:|-\(padding)-[label]-\(padding)-|", options: NSLayoutFormatOptions(0), metrics: nil, views: views)
-            let verticalMargin = NSLayoutConstraint.constraintsWithVisualFormat("V:|-\(padding)-[label]-\(padding)-|", options: NSLayoutFormatOptions(0), metrics: nil, views: views)
-            
-            self.addConstraints(horizontalMargin)
-            self.addConstraints(verticalMargin)
-            
-            if blurEffectView != nil {
-                views["blur"] = blurEffectView!
-                
-                let blurWidthConstraint = NSLayoutConstraint.constraintsWithVisualFormat("H:|[blur]|", options: NSLayoutFormatOptions(0), metrics: nil, views: views)
-                let blurHeightContraint = NSLayoutConstraint.constraintsWithVisualFormat("V:|[blur]|", options: NSLayoutFormatOptions(0), metrics: nil, views: views)
-                
-                self.addConstraints(blurWidthConstraint)
-                self.addConstraints(blurHeightContraint)
+            if let kO = Toast.keyboardObserver {
+                yMargin = margin + kO.offset
+            } else {
+                yMargin = margin
             }
             
-            constraintsSet = true
+            windowView.addSubview(toast)
+            
+            let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:[toast]-\(yMargin)-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: views)
+            let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-(>=\(margin))-[toast]-(>=\(margin))-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: views)
+            let centerContraint = NSLayoutConstraint(item: toast, attribute: .CenterX, relatedBy: .Equal, toItem: windowView, attribute: .CenterX, multiplier: 1, constant: 0)
+            
+            windowView.addConstraints(verticalConstraints)
+            windowView.addConstraints(horizontalConstraints)
+            windowView.addConstraint(centerContraint)
+
+            UIView.animateWithDuration(Toast.appearance.animationDuration, animations: { () -> Void in
+                self.toast.alpha = 1
+            })
+            
+            delayHide(duration)
         }
+    }
+    
+    /**
+        Hide the toast
+    
+        :returns: Void
+    */
+    public func hide() -> Void {
+        UIView.animateWithDuration(Toast.appearance.animationDuration, animations: { () -> Void in
+            self.toast.alpha = 0
+        }) { (_) -> Void in
+            self.remove()
+        }
+    }
+    
+    /**
+        Hide the toast after x seconds
+    
+        :param: delay Number of seconds to wait before hiding
+    
+        :returns: Void
+    */
+    public func delayHide(delay: Double) -> Void {
+        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC)))
         
-        super.updateConstraints()
+        dispatch_after(delayTime, dispatch_get_main_queue()) {
+            self.hide()
+        }
+    }
+    
+    /**
+        Remove the toast from the view tree (automatically called by
+        hide after animation has finished)
+    
+        :returns: Void
+    */
+    public func remove() -> Void {
+        self.toast.removeFromSuperview()
     }
 }
