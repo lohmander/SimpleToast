@@ -16,7 +16,7 @@ public class Toast {
     public static let appearance = ToastAppearance()
     
     /// Shared keyboard observer used to determine appropriate toast position
-    private static var keyboardObserver: KeyboardObserver?
+    static var keyboardObserver: KeyboardObserver?
     
     var text: String!
     var duration: Double!
@@ -55,32 +55,15 @@ public class Toast {
         :returns: Void
     */
     public func show() -> Void {
-        let keyWindow = UIApplication.sharedApplication().keyWindow
-        
-        if let windowView = keyWindow?.subviews.first as UIView? {
-            toast = ToastView()
-            toast.textLabel?.text = self.text
+        let nc = UIApplication.sharedApplication().keyWindow!.rootViewController as! UINavigationController
+        let vc = nc.viewControllers.last
+                
+        if let windowView = vc?.view {
+            toast = ToastView(text: self.text, parent: windowView)
             
-            let margin = Toast.appearance.margin
-            let views = ["toast": toast]
-            let yMargin: CGFloat
-            
-            if let kO = Toast.keyboardObserver {
-                yMargin = margin + kO.offset
-            } else {
-                yMargin = margin
-            }
             
             windowView.addSubview(toast)
             
-            let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:[toast]-\(yMargin)-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: views)
-            let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-(>=\(margin))-[toast]-(>=\(margin))-|", options: NSLayoutFormatOptions(rawValue: 0), metrics: nil, views: views)
-            let centerContraint = NSLayoutConstraint(item: toast, attribute: .CenterX, relatedBy: .Equal, toItem: windowView, attribute: .CenterX, multiplier: 1, constant: 0)
-            
-            windowView.addConstraints(verticalConstraints)
-            windowView.addConstraints(horizontalConstraints)
-            windowView.addConstraint(centerContraint)
-
             UIView.animateWithDuration(Toast.appearance.animationDuration, animations: { () -> Void in
                 self.toast.alpha = 1
             })
