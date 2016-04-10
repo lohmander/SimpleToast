@@ -13,7 +13,7 @@ public class Toast {
     public static let LENGTH_LONG: Double = 5
     
     /// Shared toast appearance settings
-    public static let appearance = ToastAppearance()
+    let appearance: ToastAppearance!
     
     /// Shared keyboard observer used to determine appropriate toast position
     static var keyboardObserver: KeyboardObserver?
@@ -21,6 +21,10 @@ public class Toast {
     var text: String!
     var duration: Double!
     var toast: ToastView!
+    
+    public init(appearance: ToastAppearance) {
+        self.appearance = appearance
+    }
     
     /**
         Initializes keyboard observer used to figure out the appropriate
@@ -40,8 +44,8 @@ public class Toast {
         
         :returns: Toast
     */
-    public class func makeText(text: String, duration: Double = Toast.LENGTH_LONG) -> Toast {
-        let toast = Toast()
+    public class func makeText(text: String, duration: Double = Toast.LENGTH_LONG, appearance: ToastAppearance = ToastAppearance()) -> Toast {
+        let toast = Toast(appearance: appearance)
         
         toast.text = text
         toast.duration = duration
@@ -59,12 +63,11 @@ public class Toast {
         let vc = nc.viewControllers.last
                 
         if let windowView = vc?.view {
-            toast = ToastView(text: self.text, parent: windowView)
-            
+            toast = ToastView(text: self.text, parent: windowView, appearance: appearance)
             
             windowView.addSubview(toast)
             
-            UIView.animateWithDuration(Toast.appearance.animationDuration, animations: { () -> Void in
+            UIView.animateWithDuration(appearance.animationDuration, animations: { () -> Void in
                 self.toast.alpha = 1
             })
             
@@ -78,7 +81,7 @@ public class Toast {
         :returns: Void
     */
     public func hide() -> Void {
-        UIView.animateWithDuration(Toast.appearance.animationDuration, animations: { () -> Void in
+        UIView.animateWithDuration(appearance.animationDuration, animations: { () -> Void in
             self.toast.alpha = 0
         }) { (_) -> Void in
             self.remove()

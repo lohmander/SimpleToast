@@ -33,35 +33,43 @@ class ToastView: UIView {
     
     required init() {
         super.init(frame: CGRectZero)
-        setup()
     }
     
     required override init(frame: CGRect) {
         super.init(frame: frame)
-        setup()
     }
     
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)!
-        setup()
     }
     
-    init(text: String, parent: UIView) {
+    init(text: String, parent: UIView, appearance: ToastAppearance) {
         super.init(frame: CGRectZero)
-        setupWithText(text, parent: parent)
+        setup(text, parent: parent, appearance: appearance)
     }
     
-    private func setupWithText(text: String, parent: UIView) {
-        setup()
+    private func setup(text: String, parent: UIView, appearance: ToastAppearance) {
+        
+        self.alpha = 0
+        self.backgroundColor = appearance.backgroundColor
+        self.layer.cornerRadius = appearance.cornerRadius
+        
+        textLabel = UILabel()
+        textLabel?.textColor = appearance.textColor
+        textLabel?.numberOfLines = 0
+        textLabel?.textAlignment = NSTextAlignment.Center
+        textLabel?.font = appearance.font
+        
+        self.addSubview(textLabel!)
         
         frame = CGRectMake(10, parent.frame.size.height, parent.frame.size.width - 20, 100)
         
-        textLabel?.frame = CGRectMake(0 + Toast.appearance.padding,
-                                      0 + Toast.appearance.padding,
-                                      frame.size.width - Toast.appearance.padding * 2,
+        textLabel?.frame = CGRectMake(0 + appearance.padding,
+                                      0 + appearance.padding,
+                                      frame.size.width - appearance.padding * 2,
                                       1000)
         textLabel?.text = text
-        let size = textLabel?.sizeThatFits(CGSizeMake(frame.size.width - Toast.appearance.padding * 2, 1000))
+        let size = textLabel?.sizeThatFits(CGSizeMake(frame.size.width - appearance.padding * 2, 1000))
         textLabel!.frame = CGRectMake( textLabel!.frame.origin.x,
                                       textLabel!.frame.origin.y,
                                       textLabel!.frame.size.width,
@@ -77,23 +85,9 @@ class ToastView: UIView {
         }
         
         frame = CGRectMake(frame.origin.x,
-                           frame.origin.y - textLabel!.frame.size.height - Toast.appearance.padding * 2 - 10 - yMargin,
+                           frame.origin.y - textLabel!.frame.size.height - appearance.padding * 2 - 10 - yMargin,
                            frame.size.width,
-                           textLabel!.frame.size.height + Toast.appearance.padding * 2)
-    }
-    
-    private func setup() {
-        self.alpha = 0
-        self.backgroundColor = Toast.appearance.color
-        self.layer.cornerRadius = Toast.appearance.cornerRadius
-        
-        textLabel = UILabel()
-        textLabel?.textColor = Toast.appearance.textColor
-        textLabel?.numberOfLines = 0
-        textLabel?.textAlignment = NSTextAlignment.Center
-        textLabel?.font = Toast.appearance.font
-        
-        self.addSubview(textLabel!)
+                           textLabel!.frame.size.height + appearance.padding * 2)
     }
  
 }
