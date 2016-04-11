@@ -8,74 +8,86 @@
 
 import Foundation
 
+extension UILabel{
+    
+    func requiredHeight() -> CGFloat{
+        
+        let label:UILabel = UILabel(frame: CGRectMake(0, 0, self.frame.width, CGFloat.max))
+        label.numberOfLines = 0
+        label.lineBreakMode = NSLineBreakMode.ByWordWrapping
+        label.font = self.font
+        label.text = self.text
+        
+        label.sizeToFit()
+        
+        return label.frame.height
+    }
+}
+
 class ToastView: UIView {
-    var blurEffectView: UIVisualEffectView?
     var textLabel: UILabel?
     
     private var constraintsSet: Bool = false
     
+    private var ko = KeyboardObserver()
+    
     required init() {
         super.init(frame: CGRectZero)
-        setup()
     }
     
     required override init(frame: CGRect) {
         super.init(frame: frame)
-        setup()
     }
     
     required init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        setup()
+        super.init(coder: aDecoder)!
     }
     
-    private func setup() {
-        self.setTranslatesAutoresizingMaskIntoConstraints(false)
-        self.alpha = 0
+    init(text: String, parent: UIView, appearance: ToastAppearance) {
+        super.init(frame: CGRectZero)
+        setup(text, parent: parent, appearance: appearance)
+    }
+    
+    private func setup(text: String, parent: UIView, appearance: ToastAppearance) {
         
-        if Toast.appearance.blur {
-            let blurEffect = UIBlurEffect(style: Toast.appearance.blurStyle)
-            blurEffectView = UIVisualEffectView(effect: blurEffect)
-            blurEffectView?.setTranslatesAutoresizingMaskIntoConstraints(false)
-            blurEffectView?.layer.cornerRadius = 5
-            blurEffectView?.clipsToBounds = true
-            
-            self.addSubview(blurEffectView!)
-        }
+        self.alpha = 0
+        self.backgroundColor = appearance.backgroundColor
+        self.layer.cornerRadius = appearance.cornerRadius
         
         textLabel = UILabel()
-        textLabel?.textColor = Toast.appearance.textColor
+        textLabel?.textColor = appearance.textColor
         textLabel?.numberOfLines = 0
-        textLabel?.setTranslatesAutoresizingMaskIntoConstraints(false)
+        textLabel?.textAlignment = NSTextAlignment.Center
+        textLabel?.font = appearance.font
         
         self.addSubview(textLabel!)
-    }
-    
-    override func updateConstraints() {
-        if !constraintsSet {
-            let padding = Toast.appearance.padding
-            
-            var views: [String: AnyObject] = ["label": textLabel!]
-            
-            let horizontalMargin = NSLayoutConstraint.constraintsWithVisualFormat("H:|-\(padding)-[label]-\(padding)-|", options: NSLayoutFormatOptions(0), metrics: nil, views: views)
-            let verticalMargin = NSLayoutConstraint.constraintsWithVisualFormat("V:|-\(padding)-[label]-\(padding)-|", options: NSLayoutFormatOptions(0), metrics: nil, views: views)
-            
-            self.addConstraints(horizontalMargin)
-            self.addConstraints(verticalMargin)
-            
-            if blurEffectView != nil {
-                views["blur"] = blurEffectView!
-                
-                let blurWidthConstraint = NSLayoutConstraint.constraintsWithVisualFormat("H:|[blur]|", options: NSLayoutFormatOptions(0), metrics: nil, views: views)
-                let blurHeightContraint = NSLayoutConstraint.constraintsWithVisualFormat("V:|[blur]|", options: NSLayoutFormatOptions(0), metrics: nil, views: views)
-                
-                self.addConstraints(blurWidthConstraint)
-                self.addConstraints(blurHeightContraint)
-            }
-            
-            constraintsSet = true
+        
+        frame = CGRectMake(10, parent.frame.size.height, parent.frame.size.width - 20, 100)
+        
+        textLabel?.frame = CGRectMake(0 + appearance.padding,
+                                      0 + appearance.padding,
+                                      frame.size.width - appearance.padding * 2,
+                                      1000)
+        textLabel?.text = text
+        let size = textLabel?.sizeThatFits(CGSizeMake(frame.size.width - appearance.padding * 2, 1000))
+        textLabel!.frame = CGRectMake( textLabel!.frame.origin.x,
+                                      textLabel!.frame.origin.y,
+                                      textLabel!.frame.size.width,
+                                      size!.height
+        )
+        
+        let yMargin: CGFloat
+        
+        if let kO = Toast.keyboardObserver {
+            yMargin = kO.offset
+        } else {
+            yMargin = 0
         }
         
-        super.updateConstraints()
+        frame = CGRectMake(frame.origin.x,
+                           frame.origin.y - textLabel!.frame.size.height - appearance.padding * 2 - 10 - yMargin,
+                           frame.size.width,
+                           textLabel!.frame.size.height + appearance.padding * 2)
     }
+ 
 }
